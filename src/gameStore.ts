@@ -9,6 +9,7 @@ type Player = {
     deathAge:number,
     moneyHome:number,
     moneyCarried:number,
+    tileIndex:number, // na jakem policku stoji
 }
 
 type TileKind = 'BANK' | 'NIGHTCLUB' | 'PRISON' | 'HOSPITAL';
@@ -46,8 +47,8 @@ export const useGameStore = defineStore('gameStore',()=>{
     function restartGame(){
         store.value.board.gameTiles = [{tileKind:'BANK'}, {tileKind:'NIGHTCLUB'}, {tileKind:'PRISON'}, {tileKind:'HOSPITAL'}]
         store.value.players = [
-            {age:30,deathAge:50,inteligence:1,moneyCarried:1000,moneyHome:0,name:'Player 1',strength:1},
-            {age:30,deathAge:50,inteligence:1,moneyCarried:1000,moneyHome:0,name:'Player 2',strength:1}
+            {age:30,deathAge:50,inteligence:5,moneyCarried:1000,moneyHome:0,name:'Player 1',strength:1,tileIndex:0},
+            {age:30,deathAge:50,inteligence:1,moneyCarried:1000,moneyHome:0,name:'Player 2',strength:1,tileIndex:0}
         ];
         store.value.gameState = {month:1,currentPlayerIndex:0,currentPlayerState:"ROLLDICETOMOVE"}
     }
@@ -58,9 +59,17 @@ export const useGameStore = defineStore('gameStore',()=>{
         return store.value.board;
     })
 
+    type CurrentPlayer = {player:Player, state:PlayerState};
+    const currentPlayer = computed<CurrentPlayer>(()=>{
+        return {
+            player:store.value.players[store.value.gameState.currentPlayerIndex],
+            state:store.value.gameState.currentPlayerState
+        }
+    })
 
     return {
         restartGame:restartGame,
+        currentPlayer:currentPlayer,
         board:board,
     }
 
