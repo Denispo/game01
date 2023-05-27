@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {useGameStore} from "../gameStore";
 import {computed} from "vue";
-import {defineStore} from "pinia";
 
 const props = defineProps<{myIndex:number}>();
 
@@ -17,6 +16,28 @@ const canPlayerApplyForJob = computed<boolean>(()=>{
   return isPlayerOnTile && player.value.player.inteligence >= 5;
 })
 
+const canPlayerRoolForMorgage = computed<boolean>(()=>{
+  return isPlayerOnTile && player.value.state === 'WAITFORACTION';
+})
+
+function roleForMorgage(){
+  useGameStore().roleDice();
+  switch(useGameStore().diceRoledNumber){
+    case 2:
+    case 3:
+    case 4:
+    case 5:{
+      useGameStore().addMoneyToCurrentPLayer(5000)
+      break;
+    }
+    case 6:{
+      useGameStore().addMoneyToCurrentPLayer(10000)
+      break
+    }
+  }
+}
+
+
 // Kazdy GameTile se stara sam o to, zda jeho akce mohou/nemohou byt provedeny.
 // Tzn. Napr. pouze tato komponenta vi, ze pro praci v bance je potreba mit inteligenci 5.
 // Tato  komponenta takz musi resit, jestli danou praci jiz nevykonava jiny hrac.
@@ -27,6 +48,11 @@ const canPlayerApplyForJob = computed<boolean>(()=>{
 <template>
     <div class="w-40" :class="[isPlayerOnTile ? 'bg-gray-700' : 'bg-gray-800' ]">
       <div class="text-center p-2"><span class="text-2xl">BANKA</span></div>
+      <hr class="border-gray-500">
+      <button @click="roleForMorgage" class="px-2 py-1 rounded" :class="[canPlayerRoolForMorgage ? 'bg-green-600 text-green-200 shadow' : 'bg-gray-600' ]">Hypotéka</button>
+      <div>1: nic</div>
+      <div>2-5: +5000</div>
+      <div>6: +10000</div>
       <hr class="border-gray-500">
       <div class="p-4"><button class="px-2 py-1 rounded" :class="[canPlayerApplyForJob ? 'bg-green-600 text-green-200 shadow' : 'bg-gray-600' ]">Bankéř INT:5</button></div>
     </div>
