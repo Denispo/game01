@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {useGameStore} from "../gameStore";
+import {useGame} from "../gameStore";
 import {computed} from "vue";
 
 const props = defineProps<{myIndex:number}>();
 
 const player = computed(()=>{
-  return useGameStore().currentPlayer;
+  return useGame().currentPlayer;
 })
 
 const isPlayerOnTile = computed<boolean>(()=>{
@@ -20,21 +20,23 @@ const canPlayerRoolForMorgage = computed<boolean>(()=>{
   return isPlayerOnTile && player.value.state === 'WAITFORACTION';
 })
 
-function roleForMorgage(){
-  useGameStore().roleDice();
-  switch(useGameStore().diceRoledNumber){
-    case 2:
-    case 3:
-    case 4:
-    case 5:{
-      useGameStore().addMoneyToCurrentPLayer(5000)
-      break;
+function rollForMorgage(){
+  useGame().rollDice().then((rolledNumber)=>{
+    switch(rolledNumber){
+      case 2:
+      case 3:
+      case 4:
+      case 5:{
+        useGame().addMoneyToCurrentPLayer(5000)
+        break;
+      }
+      case 6:{
+        useGame().addMoneyToCurrentPLayer(10000)
+        break
+      }
     }
-    case 6:{
-      useGameStore().addMoneyToCurrentPLayer(10000)
-      break
-    }
-  }
+  });
+
 }
 
 
@@ -49,7 +51,7 @@ function roleForMorgage(){
     <div class="w-40" :class="[isPlayerOnTile ? 'bg-gray-700' : 'bg-gray-800' ]">
       <div class="text-center p-2"><span class="text-2xl">BANKA</span></div>
       <hr class="border-gray-500">
-      <button @click="roleForMorgage" class="px-2 py-1 rounded" :class="[canPlayerRoolForMorgage ? 'bg-green-600 text-green-200 shadow' : 'bg-gray-600' ]">Hypotéka</button>
+      <button @click="rollForMorgage" class="px-2 py-1 rounded" :class="[canPlayerRoolForMorgage ? 'bg-green-600 text-green-200 shadow' : 'bg-gray-600' ]">Hypotéka</button>
       <div>1: nic</div>
       <div>2-5: +5000</div>
       <div>6: +10000</div>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {useGameStore} from "../gameStore";
+import {useGame} from "../gameStore";
 import {computed} from "vue";
 
 const props = defineProps<{myIndex:number}>();
 
 const player = computed(()=>{
-  return useGameStore().currentPlayer;
+  return useGame().currentPlayer;
 })
 
 const isPlayerOnTile = computed<boolean>(()=>{
@@ -23,17 +23,17 @@ const canPlayerRoolForCausality = computed<boolean>(()=>{
 })
 
 function roleForCausality(){
-  useGameStore().roleDice();
-  switch(useGameStore().diceRoledNumber){
+  useGame().rollDice();
+  switch(useGame().diceRoledNumber){
     case 2:
     case 3:
     case 4:
     case 5:{
-      useGameStore().addMoneyToCurrentPLayer(5000)
+      useGame().addMoneyToCurrentPLayer(5000)
       break;
     }
     case 6:{
-      useGameStore().addMoneyToCurrentPLayer(10000)
+      useGame().addMoneyToCurrentPLayer(10000)
       break
     }
   }

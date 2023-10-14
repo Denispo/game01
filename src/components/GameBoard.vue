@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {useGameStore} from "../gameStore";
+import {useGame} from "../gameStore";
 import {computed} from "vue";
 import GameTileBank from "./GameTileBank.vue";
 import GameTileDarkStreet from "./GameTileDarkStreet.vue";
 
 const board = computed(()=>{
-  return useGameStore().board;
+  return useGame().board;
 })
 </script>
 
