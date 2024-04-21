@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {useGame} from "../gameStore";
-import {computed} from "vue";
+import {computed, watch} from "vue";
 
 const props = defineProps<{myIndex:number}>();
 
@@ -12,6 +12,11 @@ const isPlayerOnTile = computed<boolean>(()=>{
   return player.value.player.tileIndex === props.myIndex;
 })
 
+watch(isPlayerOnTile,async (value)=>{
+  if (value) {
+    //const await useGame().waitForDiceRolling()
+  }
+})
 // Jak udelat at kdyz player vstoupi na toto pole, at se nastavi, ze nemuze hazet na pohyb, dokud se nevyresi co se stalo v ulicce?
 
 const canPlayerApplyForJob = computed<boolean>(()=>{

@@ -31,10 +31,13 @@ type Dice = {
     rolledAt:number, // timestamp, kdy se nastavila hodnota. Aby na to sel udelat watch
 }
 
+type GameState = 'IDLE' | 'WAITFORDICEROLLING';
+
 type Store = {
     players:Array<Player>,
     board:GameBoard,
     dice:Dice,
+    gameState:GameState;
     month:number, // 1=leden atd.
     currentPlayerIndex:number, // index hrace v Array<Player>
     currentPlayerState:PlayerState;
@@ -49,6 +52,7 @@ export const useGame = defineStore('gameStore',()=>{
         currentPlayerIndex:0,
         month:1,
         players:[],
+        gameState:'IDLE',
         dice:{diceRolling:false,rolledNumber:1,rolledAt:0},
         playerCanRoleToMove:true,
     })
@@ -67,6 +71,18 @@ export const useGame = defineStore('gameStore',()=>{
     restartGame();
 
 
+    function waitForDiceRolling(): Promise<number> {
+        return new Promise<number>((resolve, reject)=>{
+            store.value.gameState = 'WAITFORDICEROLLING';
+            setTimeout(()=>{
+                store.value.dice.diceRolling = false;
+                store.value.dice.rolledNumber = Math.floor(6 * Math.random())+1;
+                store.value.dice.rolledAt = Date.now();
+                resolve(store.value.dice.rolledNumber);
+            },Math.floor(700 * Math.random())+500)
+        })
+    }
+
     function rollDice():Promise<number>{
         return new Promise<number>((resolve, reject)=>{
             store.value.dice.diceRolling = true;
@@ -77,8 +93,6 @@ export const useGame = defineStore('gameStore',()=>{
                 resolve(store.value.dice.rolledNumber);
             },Math.floor(700 * Math.random())+500)
         })
-
-
     }
 
     const board = computed(()=>{
@@ -113,7 +127,7 @@ export const useGame = defineStore('gameStore',()=>{
         store.value.players[store.value.currentPlayerIndex].justEnteringNewTile = true;
     }
 
-    function setCurrentPlayerCanRoleToMove(canRole:boolean) {
+    function setCurrentPlayerCanRollToMove(canRole:boolean) {
         store.value.playerCanRoleToMove = canRole;
     }
 
@@ -126,8 +140,9 @@ export const useGame = defineStore('gameStore',()=>{
         board:board,
         diceRoledNumber:diceRoledNumber,
         startNextPlayerTurn:startNextPlayerTurn,
-        setCurrentPlayerCanRoleToMove:setCurrentPlayerCanRoleToMove,
+        setCurrentPlayerCanRollToMove:setCurrentPlayerCanRollToMove,
         moveCurrentPlayer:moveCurrentPlayer,
+        waitForDiceRolling:waitForDiceRolling,
     }
 
 
