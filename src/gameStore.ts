@@ -15,6 +15,9 @@ type Player = {
 
 type TileKind = 'BANK' | 'NIGHTCLUB' | 'PRISON' | 'HOSPITAL' | 'DARKSTREET';
 
+export type TileActionId = string;
+export type GameTileId = string;
+
 type GameTile = {
     tileKind:TileKind;
 }
@@ -111,6 +114,49 @@ export const useGame = defineStore('gameStore',()=>{
         return store.value.dice.rolledNumber;
     })
 
+    type TileAction = {
+        id:TileActionId,
+        name:string, // napr. pujcka 5000,-
+        numbersToRoll:string;// napr. 2-5 nebo 1
+    }
+    type GameTileData = {
+        name:string;
+        actionName:string;
+        tileActions:Array<TileAction>
+        tileJobName:string,
+    }
+
+    type GameTiles = Record<GameTileId, GameTileData>
+    const gameTiles = computed<GameTiles>(()=>{
+       // Nebudou konkretni GameTileBank nebo GameTile DarkStreet apod. BUde jen obecny GameTile a podle dat ze storu se bude vykreslovat.
+        // Stor bude vedet, co se ma dit a co ma dany tile zobrazovat apod.
+        const result:GameTiles = {
+            '1':{name:"BANKA",tileJobName:"Bankéř INT:5",actionName:"Hypotéka",tileActions:[
+                {id:"noop",name:"Nic",numbersToRoll:"1"},
+                {id:"addMoney5000",name:"+5000",numbersToRoll:"2-5"},
+                {id:"AddMoney10000",name:"+10000",numbersToRoll:"6"},
+                ]},
+            '2':{name:"TEMNÁ ULIČKA",tileJobName:"",actionName:"", tileActions:[
+                {id:"attackeByStrong8",name:"Přepadli tě síle 8",numbersToRoll:"1"},
+                {id:"attackeByStrong5",name:"Přepadli tě síle 5",numbersToRoll:"2-3"},
+                {id:"noop",name:"Nic",numbersToRoll:"4-5"},
+                {id:"meetDealer",name:"potkal jsi dealera",numbersToRoll:"6"},
+                ]},
+            '3':{name:"Škola",tileJobName:"Školník INT:2 STR:2",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
+            '4':{name:"Nemocnice",tileJobName:"",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
+            '5':{name:"Lékárna",tileJobName:"",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
+        }
+        return result;
+    })
+
+    const gameTileList = computed<Array<GameTileId>>(()=>{
+        return ['1','2','3','4','5']
+    })
+
+    function doAction(playerId:PlayerId, tileActionId:TileActionId) {
+
+    }
+
     function addMoneyToCurrentPLayer(addMoneyCarried:number = 0, addMoneyHome:number = 0){
         store.value.players[store.value.currentPlayerIndex].moneyCarried += addMoneyCarried
         store.value.players[store.value.currentPlayerIndex].moneyHome += addMoneyHome
@@ -133,6 +179,8 @@ export const useGame = defineStore('gameStore',()=>{
 
     return {
         rollDice:rollDice,
+        gameTileList:gameTileList,
+        gameTiles:gameTiles,
         dice:readonly(store.value.dice),
         restartGame:restartGame,
         currentPlayer:currentPlayer,
