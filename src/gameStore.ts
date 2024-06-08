@@ -110,6 +110,10 @@ export const useGame = defineStore('gameStore',()=>{
         }
     })
 
+    const players = computed(()=>{
+        return store.value.players;
+    })
+
     const diceRoledNumber = computed(()=>{
         return store.value.dice.rolledNumber;
     })
@@ -153,7 +157,7 @@ export const useGame = defineStore('gameStore',()=>{
         return ['1','2','3','4','5']
     })
 
-    function doAction(playerId:PlayerId, tileActionId:TileActionId) {
+    function doAction(playerIndex:number, tileActionId:TileActionId) {
 
     }
 
@@ -187,6 +191,7 @@ export const useGame = defineStore('gameStore',()=>{
         addMoneyToCurrentPLayer:addMoneyToCurrentPLayer,
         board:board,
         diceRoledNumber:diceRoledNumber,
+        players:players,
         startNextPlayerTurn:startNextPlayerTurn,
         setCurrentPlayerCanRollToMove:setCurrentPlayerCanRollToMove,
         moveCurrentPlayer:moveCurrentPlayer,
