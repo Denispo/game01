@@ -21,8 +21,8 @@ const players = computed(()=>{
 
   </div>
   <div class="flex flex-row mt-20 ml-10 gap-4 pb-10">
-    <template v-for="(value, index) in players" :key="index">
-      <PlayerSheet :player-index="index"></PlayerSheet>
+    <template v-for="(player, playerId) in players" :key="playerId">
+      <PlayerSheet :player-id="playerId"></PlayerSheet>
     </template>
 
   </div>

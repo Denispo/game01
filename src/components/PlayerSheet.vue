@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { useGame} from "../gameStore";
+import {PlayerId, useGame} from "../gameStore";
 import {computed} from "vue";
 
-const props = defineProps<{playerIndex:number}>();
+const props = defineProps<{playerId:PlayerId}>();
 
 const player = computed(()=>{
-  return useGame().players[props.playerIndex];
+  return useGame().players[props.playerId];
 })
 
+const currentPlayerId = computed(()=>{
+    return useGame().currentPlayerId
+})
 
 </script>
 
 <template>
-    <div class="bg-gray-800 w-60">
+    <div class="w-60 p-4" :class="[currentPlayerId === props.playerId ? 'bg-gray-600 text-gray-200 ' : 'bg-gray-800 ']">
         <div class="text-center p-2"><span class="text-2xl">{{player.name}}</span></div>
         <hr class="border-gray-500">
         <div>Peníze: {{player.moneyCarried}}</div>

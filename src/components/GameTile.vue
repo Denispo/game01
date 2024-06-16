@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {GameTileId, Player, useGame} from "../gameStore";
+import {GameTileId, Player, PlayerId, useGame} from "../gameStore";
 import {computed} from "vue";
 
 const props = defineProps<{id:GameTileId}>();
@@ -10,11 +10,19 @@ const currentTile = computed(()=>{
 })
 
 const playersOnTile = computed(()=>{
-    const result:Array<Player> = [];
-    currentTile.value.playersOnTile.forEach((value)=>{
-        result.push(useGame().players[value]);
+    const result:Array<PlayerId> = [];
+    currentTile.value.playersOnTile.forEach((playerId)=>{
+        result.push(playerId);
     })
     return result;
+})
+
+const players = computed(()=>{
+    return useGame().players;
+})
+
+const currentPlayerId = computed(()=>{
+    return useGame().currentPlayerId;
 })
 
 </script>
@@ -23,8 +31,8 @@ const playersOnTile = computed(()=>{
     <div class="w-40 bg-gray-800">
         <template v-if="currentTile">
             <div class="h-[30px]">
-              <template v-for="onePlayer in playersOnTile">
-                  <span>{{onePlayer.name}}</span>
+              <template v-for="(playerId) in playersOnTile">
+                  <span :class="[currentPlayerId === playerId]">{{players[playerId].name}}</span>
               </template>
             </div>
             <div class="text-center p-2"><span class="text-2xl">{{currentTile.name}}</span></div>
