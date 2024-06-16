@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {computed, readonly, ref} from "vue";
 
-type Player = {
+export type Player = {
     name:string,
     strength:number,
     inteligence:number,
@@ -10,7 +10,6 @@ type Player = {
     moneyHome:number,
     moneyCarried:number,
     tileIndex:number, // na jakem policku stoji
-    justEnteringNewTile:boolean, // true, pokud prave prisel na nove policko
 }
 
 type TileKind = 'BANK' | 'NIGHTCLUB' | 'PRISON' | 'HOSPITAL' | 'DARKSTREET';
@@ -63,8 +62,8 @@ export const useGame = defineStore('gameStore',()=>{
     function restartGame(){
         store.value.board.gameTiles = [{tileKind:'BANK'}, {tileKind:'DARKSTREET'},{tileKind:'DARKSTREET'},{tileKind:'DARKSTREET'}]
         store.value.players = [
-            {age:25,deathAge:50,inteligence:2,moneyCarried:2000,moneyHome:8000,name:'Player 1',strength:3,tileIndex:0, justEnteringNewTile:false},
-            {age:25,deathAge:50,inteligence:3,moneyCarried:2000,moneyHome:8000,name:'Player 2',strength:2,tileIndex:0, justEnteringNewTile:false}
+            {age:22,deathAge:50,inteligence:2,moneyCarried:2000,moneyHome:8000,name:'Player 1',strength:3,tileIndex:0},
+            {age:30,deathAge:50,inteligence:4,moneyCarried:5000,moneyHome:10000,name:'Player 2',strength:4,tileIndex:0}
         ];
         store.value.month = 1;
         store.value.currentPlayerIndex = 0;
@@ -128,6 +127,7 @@ export const useGame = defineStore('gameStore',()=>{
         actionName:string;
         tileActions:Array<TileAction>
         tileJobName:string,
+        playersOnTile:Array<number>
     }
 
     type GameTiles = Record<GameTileId, GameTileData>
@@ -135,20 +135,56 @@ export const useGame = defineStore('gameStore',()=>{
        // Nebudou konkretni GameTileBank nebo GameTile DarkStreet apod. BUde jen obecny GameTile a podle dat ze storu se bude vykreslovat.
         // Stor bude vedet, co se ma dit a co ma dany tile zobrazovat apod.
         const result:GameTiles = {
-            '1':{name:"BANKA",tileJobName:"Bankéř INT:5",actionName:"Hypotéka",tileActions:[
-                {id:"noop",name:"Nic",numbersToRoll:"1"},
-                {id:"addMoney5000",name:"+5000",numbersToRoll:"2-5"},
-                {id:"AddMoney10000",name:"+10000",numbersToRoll:"6"},
-                ]},
-            '2':{name:"TEMNÁ ULIČKA",tileJobName:"",actionName:"", tileActions:[
-                {id:"attackeByStrong8",name:"Přepadli tě síle 8",numbersToRoll:"1"},
-                {id:"attackeByStrong5",name:"Přepadli tě síle 5",numbersToRoll:"2-3"},
-                {id:"noop",name:"Nic",numbersToRoll:"4-5"},
-                {id:"meetDealer",name:"potkal jsi dealera",numbersToRoll:"6"},
-                ]},
-            '3':{name:"Škola",tileJobName:"Školník INT:2 STR:2",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
-            '4':{name:"Nemocnice",tileJobName:"",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
-            '5':{name:"Lékárna",tileJobName:"",actionName:"",tileActions:[{id:"noop",name:"Nic",numbersToRoll:"1-2"}]},
+            '1':{
+                name:"BANKA",
+                tileJobName:"Bankéř INT:5",
+                actionName:"Hypotéka",
+                tileActions:[
+                  {id:"noop",name:"Nic",numbersToRoll:"1"},
+                  {id:"addMoney5000",name:"+5000",numbersToRoll:"2-5"},
+                  {id:"AddMoney10000",name:"+10000",numbersToRoll:"6"},
+                ],
+                playersOnTile:[0]
+            },
+            '2':{
+                name:"TEMNÁ ULIČKA",
+                tileJobName:"",
+                actionName:"",
+                tileActions:[
+                    {id:"attackeByStrong8",name:"Přepadli tě síle 8",numbersToRoll:"1"},
+                    {id:"attackeByStrong5",name:"Přepadli tě síle 5",numbersToRoll:"2-3"},
+                    {id:"noop",name:"Nic",numbersToRoll:"4-5"},
+                    {id:"meetDealer",name:"potkal jsi dealera",numbersToRoll:"6"},
+                ],
+                playersOnTile:[]
+            },
+            '3':{
+                name:"Škola",
+                tileJobName:"Školník INT:2 STR:2",
+                actionName:"",
+                tileActions:[
+                    {id:"noop",name:"Nic",numbersToRoll:"1-2"}
+                ],
+                playersOnTile:[],
+            },
+            '4':{
+                name:"Nemocnice",
+                tileJobName:"",
+                actionName:"",
+                tileActions:[
+                    {id:"noop",name:"Nic",numbersToRoll:"1-2"}
+                ],
+                playersOnTile:[1]
+            },
+            '5':{
+                name:"Lékárna",
+                tileJobName:"",
+                actionName:"",
+                tileActions:[
+                    {id:"noop",name:"Nic",numbersToRoll:"1-2"}
+                ],
+                playersOnTile:[],
+            },
         }
         return result;
     })
@@ -174,7 +210,6 @@ export const useGame = defineStore('gameStore',()=>{
     function moveCurrentPlayer(tilesCount: number) {
         let tileIndex = store.value.players[store.value.currentPlayerIndex].tileIndex;
         store.value.players[store.value.currentPlayerIndex].tileIndex =(tileIndex + 1) % store.value.board.gameTiles.length;
-        store.value.players[store.value.currentPlayerIndex].justEnteringNewTile = true;
     }
 
     function setCurrentPlayerCanRollToMove(canRole:boolean) {
