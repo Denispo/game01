@@ -17,8 +17,8 @@ const currentPlayerIndex = computed(()=>{
 
 <template>
     <div class="flex flex-row mt-20 ml-10 gap-8">
-        <div v-for="(currentTile, tileIndex) in gameTileList" :key="tileIndex" class="w-40">
-            <div class="w-40 bg-gray-800">
+        <div v-for="(currentTile, tileIndex) in gameTileList" :key="tileIndex" class="flex-1 max-w-48 border-dashed border-2 border-gray-600">
+            <div class="m-2 bg-gray-800">
                 <div class="h-[30px]">
                     <template v-for="(playerData, playerIndex,) in players">
                         <span v-if="playerData.tileIndex === tileIndex" :class="[currentPlayerIndex === playerIndex ? 'font-bold' : '']">{{playerData.name}}</span>
