@@ -1,28 +1,20 @@
 <script setup lang="ts">
-import {GameTileId, Player, PlayerId, useGame} from "../gameStore";
+import {GameTileIndex, Player, PlayerIndex, useGame} from "../gameStore";
 import {computed} from "vue";
 
-const props = defineProps<{id:GameTileId}>();
+const props = defineProps<{index:GameTileIndex}>();
 
 
 const currentTile = computed(()=>{
-  return useGame().gameTiles[props.id];
-})
-
-const playersOnTile = computed(()=>{
-    const result:Array<PlayerId> = [];
-    currentTile.value.playersOnTile.forEach((playerId)=>{
-        result.push(playerId);
-    })
-    return result;
+  return useGame().gameTileList[props.index];
 })
 
 const players = computed(()=>{
     return useGame().players;
 })
 
-const currentPlayerId = computed(()=>{
-    return useGame().currentPlayerId;
+const currentPlayerIndex = computed(()=>{
+    return useGame().currentPlayerIndex;
 })
 
 </script>
@@ -31,8 +23,8 @@ const currentPlayerId = computed(()=>{
     <div class="w-40 bg-gray-800">
         <template v-if="currentTile">
             <div class="h-[30px]">
-              <template v-for="(playerId) in playersOnTile">
-                  <span :class="[currentPlayerId === playerId]">{{players[playerId].name}}</span>
+              <template v-for="playerIindex in currentTile.playersOnTile">
+                  <span :class="[currentPlayerIndex === playerIindex]">{{players[playerIindex].name}}</span>
               </template>
             </div>
             <div class="text-center p-2"><span class="text-2xl">{{currentTile.name}}</span></div>
