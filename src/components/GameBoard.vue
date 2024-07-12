@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {useGame} from "../gameStore";
 import {computed} from "vue";
-import GameTile from "./GameTile.vue";
-import PlayerSheet from "./PlayerSheet.vue";
 
 const gameTileList = computed(()=>{
   return useGame().gameTileList;
@@ -41,8 +39,17 @@ const currentPlayerIndex = computed(()=>{
 
   </div>
   <div class="flex flex-row mt-20 ml-10 gap-4 pb-10">
-    <template v-for="(player, playerId) in players" :key="playerId">
-      <PlayerSheet :player-id="playerId"></PlayerSheet>
+    <template v-for="(playerData, playerIndex) in players" :key="playerIndex">
+        <div class="w-60 p-4" :class="[currentPlayerIndex === playerIndex ? 'bg-gray-600 text-gray-200 ' : 'bg-gray-800 ']">
+            <div class="text-center p-2"><span class="text-2xl">{{playerData.name}}</span></div>
+            <hr class="border-gray-500">
+            <div>Peníze: {{playerData.moneyCarried}}</div>
+            <div>Peníze doma: {{playerData.moneyHome}}</div>
+            <div>Věk: {{playerData.age}}</div>
+            <div>Věk smrti: {{playerData.deathAge}}</div>
+            <div>Síla: {{playerData.strength}}</div>
+            <div>Inteligence: {{playerData.inteligence}}</div>
+        </div>
     </template>
 
   </div>
