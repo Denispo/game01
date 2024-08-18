@@ -13,6 +13,12 @@ const players = computed(()=>{
 const currentPlayerIndex = computed(()=>{
     return useGame().currentPlayerIndex;
 })
+
+function doRollForMove(playerIndex: number) {
+   useGame().rollDice().then((result)=>{
+      useGame().moveCurrentPlayer(result);
+   })
+}
 </script>
 
 <template>
@@ -48,6 +54,7 @@ const currentPlayerIndex = computed(()=>{
                 <div>Věk smrti: {{playerData.deathAge}}</div>
                 <div>Síla: {{playerData.strength}}</div>
                 <div>Inteligence: {{playerData.inteligence}}</div>
+               <button @click="doRollForMove(playerIndex)"  class="px-2 py-1 rounded" :class="[playerData.canRollForMove ? 'bg-green-600 text-green-200 shadow cursor-pointer' : 'bg-gray-500 text-gray-200 cursor-default']">Pohyb</button>
             </div>
         </template>
 

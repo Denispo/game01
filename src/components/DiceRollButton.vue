@@ -12,6 +12,8 @@ setInterval(()=>{
     tmp = diceValue.value;
     diceValue.value = rollDiceNumber(diceValue.value, lastValue); // At se neroluje 2x za sebou stejne cislo
     lastValue = tmp;
+  } else {
+     diceValue.value = useGame().dice.rolledNumber
   }
 },50)
 

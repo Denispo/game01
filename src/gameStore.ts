@@ -12,6 +12,7 @@ export type Player = {
     moneyHome: number,
     moneyCarried: number,
     tileIndex: GameTileIndex, // na jakem policku stoji
+    canRollForMove:boolean,
 }
 
 export type TileActionId = string;
@@ -123,7 +124,8 @@ export const useGame = defineStore('gameStore', () => {
                 moneyHome: 8000,
                 name: 'Player 1',
                 strength: 3,
-                tileIndex: 1
+                tileIndex: 1,
+                canRollForMove:true,
             },
             {
                 age: 30,
@@ -133,7 +135,8 @@ export const useGame = defineStore('gameStore', () => {
                 moneyHome: 10000,
                 name: 'Player 2',
                 strength: 4,
-                tileIndex: 3
+                tileIndex: 3,
+                canRollForMove: false
             }];
         store.value.month = 1;
         store.value.currentPlayerIndex = 0;
@@ -201,7 +204,7 @@ export const useGame = defineStore('gameStore', () => {
 
     function moveCurrentPlayer(tilesCount: number) {
         const currentTileIndex = store.value.players[store.value.currentPlayerIndex].tileIndex;
-        store.value.players[store.value.currentPlayerIndex].tileIndex = (currentTileIndex + 1) % store.value.board.gameTiles.length;
+        store.value.players[store.value.currentPlayerIndex].tileIndex = (currentTileIndex + tilesCount) % store.value.board.gameTiles.length;
     }
 
     function setCurrentPlayerCanRollToMove(canRole: boolean) {
