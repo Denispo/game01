@@ -32,12 +32,12 @@ function doRollForMove(playerIndex: number) {
                 </div>
                 <div class="text-center p-2"><span class="text-2xl">{{currentTile.name}}</span></div>
                 <hr class="border-gray-500">
-                <button v-if="currentTile.actionName" @click=""  class="px-2 py-1 rounded bg-green-600 text-green-200 shadow">{{currentTile.actionName}}</button>
+                <button v-if="currentTile.actionName" @click=""  class="px-2 py-1 rounded-sm bg-green-600 text-green-200 shadow-sm">{{currentTile.actionName}}</button>
                 <div v-for="action in currentTile.tileActions">
                     {{action.numbersToRoll}}: {{action.name}}
                 </div>
                 <hr class="border-gray-500">
-                <div v-if="currentTile.tileJobName" class="p-4"><button class="px-2 py-1 rounded bg-green-600 text-green-200 shadow" >{{currentTile.tileJobName}}</button></div>
+                <div v-if="currentTile.tileJobName" class="p-4"><button class="px-2 py-1 rounded-sm bg-green-600 text-green-200 shadow-sm" >{{currentTile.tileJobName}}</button></div>
 
             </div>
         </div>
@@ -54,7 +54,7 @@ function doRollForMove(playerIndex: number) {
                 <div>Věk smrti: {{playerData.deathAge}}</div>
                 <div>Síla: {{playerData.strength}}</div>
                 <div>Inteligence: {{playerData.inteligence}}</div>
-               <button @click="doRollForMove(playerIndex)"  class="px-2 py-1 rounded" :class="[playerData.canRollForMove ? 'bg-green-600 text-green-200 shadow cursor-pointer' : 'bg-gray-500 text-gray-200 cursor-default']">Pohyb</button>
+               <button @click="doRollForMove(playerIndex)"  class="px-2 py-1 rounded-sm" :class="[playerData.canRollForMove ? 'bg-green-600 text-green-200 shadow-sm cursor-pointer' : 'bg-gray-500 text-gray-200 cursor-default']">Pohyb</button>
             </div>
         </template>
 
