@@ -11,11 +11,12 @@ export type Player = {
     deathAge: number,
     moneyHome: number,
     moneyCarried: number,
-    tileIndex: GameTileIndex, // na jakem policku stoji
+    tileId: GameTileId, // na jakem policku stoji
     canRollForMove:boolean,
 }
-
+export type GameTileId = number;
 export type TileActionId = string;
+export type JobId = number;
 export type GameTileIndex = number;
 
 
@@ -26,6 +27,7 @@ type TileAction = {
 }
 
 type GameTileData = {
+    tileId: GameTileId,
     name: string;
     actionName: string;
     tileActions: Array<TileAction>
@@ -54,9 +56,9 @@ type Store = {
     playerCanRoleToMove: boolean;
 }
 
-export const useGame = defineStore('gameStore', () => {
+export const _storeGame = defineStore('gameStore', () => {
 
-    const store = ref<Store>({
+    const state = ref<Store>({
         board: {gameTiles: []},
         currentPlayerIndex: 0,
         month: 1,
@@ -67,8 +69,9 @@ export const useGame = defineStore('gameStore', () => {
     })
 
     function restartGame() {
-        store.value.board.gameTiles = [
+        state.value.board.gameTiles = [
             {
+                tileId: 1,
                 name: "BANKA",
                 tileJobName: "Bankéř INT:5",
                 actionName: "Hypotéka",
@@ -79,6 +82,7 @@ export const useGame = defineStore('gameStore', () => {
                 ],
             },
             {
+                tileId: 2,
                 name: "TEMNÁ ULIČKA",
                 tileJobName: "",
                 actionName: "",
@@ -90,6 +94,7 @@ export const useGame = defineStore('gameStore', () => {
                 ],
             },
             {
+                tileId: 3,
                 name: "Škola",
                 tileJobName: "Školník INT:2 STR:2",
                 actionName: "",
@@ -98,6 +103,7 @@ export const useGame = defineStore('gameStore', () => {
                 ],
             },
             {
+                tileId: 4,
                 name: "Nemocnice",
                 tileJobName: "",
                 actionName: "",
@@ -106,6 +112,7 @@ export const useGame = defineStore('gameStore', () => {
                 ],
             },
             {
+                tileId: 5,
                 name: "Lékárna",
                 tileJobName: "",
                 actionName: "",
@@ -115,7 +122,7 @@ export const useGame = defineStore('gameStore', () => {
             }
 
         ]
-        store.value.players = [
+        state.value.players = [
             {
                 age: 22,
                 deathAge: 50,
@@ -124,7 +131,7 @@ export const useGame = defineStore('gameStore', () => {
                 moneyHome: 8000,
                 name: 'Player 1',
                 strength: 3,
-                tileIndex: 1,
+                tileId: 1,
                 canRollForMove:true,
             },
             {
@@ -135,11 +142,11 @@ export const useGame = defineStore('gameStore', () => {
                 moneyHome: 10000,
                 name: 'Player 2',
                 strength: 4,
-                tileIndex: 3,
+                tileId: 3,
                 canRollForMove: false
             }];
-        store.value.month = 1;
-        store.value.currentPlayerIndex = 0;
+        state.value.month = 1;
+        state.value.currentPlayerIndex = 0;
     }
 
     restartGame();
@@ -147,46 +154,46 @@ export const useGame = defineStore('gameStore', () => {
 
     function waitForDiceRolling(): Promise<number> {
         return new Promise<number>((resolve, reject) => {
-            store.value.gameState = 'WAITFORDICEROLLING';
+            state.value.gameState = 'WAITFORDICEROLLING';
             setTimeout(() => {
-                store.value.dice.diceRolling = false;
-                store.value.dice.rolledNumber = Math.floor(6 * Math.random()) + 1;
-                store.value.dice.rolledAt = Date.now();
-                resolve(store.value.dice.rolledNumber);
+                state.value.dice.diceRolling = false;
+                state.value.dice.rolledNumber = Math.floor(6 * Math.random()) + 1;
+                state.value.dice.rolledAt = Date.now();
+                resolve(state.value.dice.rolledNumber);
             }, Math.floor(700 * Math.random()) + 500)
         })
     }
 
     function rollDice(): Promise<number> {
         return new Promise<number>((resolve, reject) => {
-            store.value.dice.diceRolling = true;
+            state.value.dice.diceRolling = true;
             setTimeout(() => {
-                store.value.dice.diceRolling = false;
-                store.value.dice.rolledNumber = Math.floor(6 * Math.random()) + 1;
-                store.value.dice.rolledAt = Date.now();
-                resolve(store.value.dice.rolledNumber);
+                state.value.dice.diceRolling = false;
+                state.value.dice.rolledNumber = Math.floor(6 * Math.random()) + 1;
+                state.value.dice.rolledAt = Date.now();
+                resolve(state.value.dice.rolledNumber);
             }, Math.floor(700 * Math.random()) + 500)
         })
     }
 
     const board = computed(() => {
-        return store.value.board;
+        return state.value.board;
     })
 
     const currentPlayerIndex = computed<PlayerIndex>(() => {
-        return store.value.currentPlayerIndex;
+        return state.value.currentPlayerIndex;
     })
 
     const players = computed(() => {
-        return store.value.players;
+        return state.value.players;
     })
 
     const diceRoledNumber = computed(() => {
-        return store.value.dice.rolledNumber;
+        return state.value.dice.rolledNumber;
     })
 
     const gameTileList = computed<Array<GameTileData>>(() => {
-        return store.value.board.gameTiles;
+        return state.value.board.gameTiles;
     })
 
     function doAction(playerIndex: number, tileActionId: TileActionId) {
@@ -194,27 +201,30 @@ export const useGame = defineStore('gameStore', () => {
     }
 
     function addMoneyToCurrentPLayer(addMoneyCarried: number = 0, addMoneyHome: number = 0) {
-        store.value.players[store.value.currentPlayerIndex].moneyCarried += addMoneyCarried
-        store.value.players[store.value.currentPlayerIndex].moneyHome += addMoneyHome
+        state.value.players[state.value.currentPlayerIndex].moneyCarried += addMoneyCarried
+        state.value.players[state.value.currentPlayerIndex].moneyHome += addMoneyHome
     }
 
     function startNextPlayerTurn() {
-        store.value.currentPlayerIndex = (store.value.currentPlayerIndex + 1) % store.value.players.length;
+        state.value.currentPlayerIndex = (state.value.currentPlayerIndex + 1) % state.value.players.length;
     }
 
     function moveCurrentPlayer(tilesCount: number) {
-        const currentTileIndex = store.value.players[store.value.currentPlayerIndex].tileIndex;
-        store.value.players[store.value.currentPlayerIndex].tileIndex = (currentTileIndex + tilesCount) % store.value.board.gameTiles.length;
+        const currentTileId = state.value.players[state.value.currentPlayerIndex].tileId;
+
+        // TOTO: Spravne zjisit ID tilu na kterem je player. TieId nemusi jit postupne od 1 do X.
+        state.value.players[state.value.currentPlayerIndex].tileId = (currentTileIndex + tilesCount) % state.value.board.gameTiles.length;
     }
 
     function setCurrentPlayerCanRollToMove(canRole: boolean) {
-        store.value.playerCanRoleToMove = canRole;
+        state.value.playerCanRoleToMove = canRole;
     }
 
     return {
+        _state:state,
         rollDice: rollDice,
         gameTileList: gameTileList,
-        dice: readonly(store.value.dice),
+        dice: readonly(state.value.dice),
         restartGame: restartGame,
         currentPlayerIndex: currentPlayerIndex,
         addMoneyToCurrentPLayer: addMoneyToCurrentPLayer,

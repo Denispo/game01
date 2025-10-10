@@ -1,46 +1,32 @@
 <script setup lang="ts">
-import {useGame} from "../gameStore";
+import {_storeGame} from "../gameStore";
 import {computed} from "vue";
+import GameTile from "./GameTile.vue";
 
 const gameTileList = computed(()=>{
-    return useGame().gameTileList;
+    return _storeGame().gameTileList;
 })
 
 const players = computed(()=>{
-    return useGame().players;
+    return _storeGame().players;
 })
 
 const currentPlayerIndex = computed(()=>{
-    return useGame().currentPlayerIndex;
+    return _storeGame().currentPlayerIndex;
 })
 
 function doRollForMove(playerIndex: number) {
-   useGame().rollDice().then((result)=>{
-      useGame().moveCurrentPlayer(result);
+   _storeGame().rollDice().then((result)=>{
+      _storeGame().moveCurrentPlayer(result);
    })
 }
 </script>
 
 <template>
     <div class="flex flex-row mt-20 ml-10 gap-8">
-        <div v-for="(currentTile, tileIndex) in gameTileList" :key="tileIndex" class="flex-1 max-w-48 border-dashed border-2 border-gray-600">
-            <div class="m-2 bg-gray-800">
-                <div class="h-[30px]">
-                    <template v-for="(playerData, playerIndex,) in players">
-                        <span v-if="playerData.tileIndex === tileIndex" :class="[currentPlayerIndex === playerIndex ? 'font-bold' : '']">{{playerData.name}}</span>
-                    </template>
-                </div>
-                <div class="text-center p-2"><span class="text-2xl">{{currentTile.name}}</span></div>
-                <hr class="border-gray-500">
-                <button v-if="currentTile.actionName" @click=""  class="px-2 py-1 rounded-sm bg-green-600 text-green-200 shadow-sm">{{currentTile.actionName}}</button>
-                <div v-for="action in currentTile.tileActions">
-                    {{action.numbersToRoll}}: {{action.name}}
-                </div>
-                <hr class="border-gray-500">
-                <div v-if="currentTile.tileJobName" class="p-4"><button class="px-2 py-1 rounded-sm bg-green-600 text-green-200 shadow-sm" >{{currentTile.tileJobName}}</button></div>
-
-            </div>
-        </div>
+       <template v-for="(oneGameTile) in gameTileList" :key="oneGameTile.tileId" >
+          <GameTile :gameTileId="oneGameTile.tileId"/>
+       </template>
     </div>
 
     <div class="flex flex-row mt-20 ml-10 gap-4 pb-10">
