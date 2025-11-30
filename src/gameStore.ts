@@ -13,12 +13,14 @@ export type Player = {
     moneyCarried: number,
     tileId: GameTileId, // na jakem policku stoji
     canRollForMove:boolean,
+    job?:{ // jakou praci ma aktualne hrac
+        jobId:JobId,
+        acquiredAt:number,// timestamp kdy hrac tuto praci ziskal
+    },
 }
 export type GameTileId = number;
 export type TileActionId = string;
 export type JobId = number;
-export type GameTileIndex = number;
-
 
 type TileAction = {
     id: TileActionId,
@@ -32,6 +34,17 @@ type GameTileData = {
     actionName: string;
     tileActions: Array<TileAction>
     tileJobName: string,
+    jobIds: Array<JobId>, // jake prace nabizi toto policko
+}
+
+type Job = {
+    jobId:JobId,
+    name: string,
+    sallaryAmount: number, // vyse vyplaty pro hrace, ktery ma tuto praci
+    requirements: {
+       minINT:number,
+       minSTR:number,
+    },
 }
 
 type Dice = {
@@ -45,6 +58,7 @@ type GameState = 'IDLE' | 'WAITFORDICEROLLING';
 type Store = {
     players: Array<Player>,
     gameTiles: Array<GameTileData>,
+    job:Record<JobId,Job>,
     dice: Dice,
     gameState: GameState;
     month: number, // 1=leden atd.
@@ -58,6 +72,7 @@ export const _storeGame = defineStore('gameStore', () => {
         gameTiles: [],
         currentPlayerIndex: 0,
         month: 1,
+        job:{},
         players: [],
         gameState: 'IDLE',
         dice: {diceRolling: false, rolledNumber: 1, rolledAt: 0},
@@ -76,6 +91,7 @@ export const _storeGame = defineStore('gameStore', () => {
                     {id: "addMoney5000", name: "+5000", numbersToRoll: "2-5"},
                     {id: "AddMoney10000", name: "+10000", numbersToRoll: "6"},
                 ],
+                jobIds:[],
             },
             {
                 tileId: 2,
@@ -88,6 +104,7 @@ export const _storeGame = defineStore('gameStore', () => {
                     {id: "noop", name: "Nic", numbersToRoll: "4-5"},
                     {id: "meetDealer", name: "potkal jsi dealera", numbersToRoll: "6"},
                 ],
+                jobIds:[]
             },
             {
                 tileId: 3,
@@ -97,6 +114,7 @@ export const _storeGame = defineStore('gameStore', () => {
                 tileActions: [
                     {id: "noop", name: "Nic", numbersToRoll: "1-2"}
                 ],
+                jobIds:[]
             },
             {
                 tileId: 4,
@@ -106,6 +124,7 @@ export const _storeGame = defineStore('gameStore', () => {
                 tileActions: [
                     {id: "noop", name: "Nic", numbersToRoll: "1-2"}
                 ],
+                jobIds:[]
             },
             {
                 tileId: 5,
@@ -115,6 +134,7 @@ export const _storeGame = defineStore('gameStore', () => {
                 tileActions: [
                     {id: "noop", name: "Nic", numbersToRoll: "1-2"}
                 ],
+                jobIds:[]
             }
 
         ]
