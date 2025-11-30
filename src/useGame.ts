@@ -56,10 +56,6 @@ export function useGame() {
         })
     }
 
-    const board = computed(() => {
-        return storeGame._state.board;
-    })
-
     const currentPlayerIndex = computed<PlayerIndex>(() => {
         return storeGame._state.currentPlayerIndex;
     })
@@ -73,7 +69,7 @@ export function useGame() {
     })
 
     const gameTileList = computed<Array<GameTileData>>(() => {
-        return storeGame._state.board.gameTiles;
+        return storeGame._state.gameTiles;
     })
 
     function addMoneyToCurrentPLayer(addMoneyCarried: number = 0, addMoneyHome: number = 0) {
@@ -86,8 +82,8 @@ export function useGame() {
     }
 
     function moveCurrentPlayer(tilesCount: number) {
-        const currentTileIndex = storeGame._state.players[storeGame._state.currentPlayerIndex].tileIndex;
-        storeGame._state.players[storeGame._state.currentPlayerIndex].tileIndex = (currentTileIndex + tilesCount) % storeGame._state.board.gameTiles.length;
+        const currentTileIndex = storeGame._state.players[storeGame._state.currentPlayerIndex].tileId;
+        storeGame._state.players[storeGame._state.currentPlayerIndex].tileId = (currentTileIndex + tilesCount) % storeGame._state.gameTiles.length;
     }
 
     function setCurrentPlayerCanRollToMove(canRole: boolean) {
@@ -105,7 +101,6 @@ export function useGame() {
         initializeGame: initializeGame,
         currentPlayerIndex: currentPlayerIndex,
         addMoneyToCurrentPLayer: addMoneyToCurrentPLayer,
-        board: board,
         diceRoledNumber: diceRoledNumber,
         players: players,
         startNextPlayerTurn: startNextPlayerTurn,

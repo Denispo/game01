@@ -34,7 +34,7 @@ export function useGameTile(gameTileId:MaybeRefOrGetter<GameTileId>) {
       tileJobs: Array<TileJob>,
    }
    const gameTileData = computed(() => {
-      return storeGame._state.board.gameTiles[toValue(gameTileId)];
+      return storeGame._state.gameTiles[toValue(gameTileId)];
 
    })
 

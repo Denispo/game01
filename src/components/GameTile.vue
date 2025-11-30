@@ -23,7 +23,7 @@ const currentPlayerIndex = computed(()=>{
          <div class="m-2 bg-gray-800">
             <div class="h-[30px]">
                <template v-for="(playerData, playerIndex) in players">
-                  <span v-if="playerData.tileIndex === tileIndex" :class="[currentPlayerIndex === playerIndex ? 'font-bold' : '']">{{playerData.name}}</span>
+                  <span v-if="playerData.tileId === gameTileId" :class="[currentPlayerIndex === playerIndex ? 'font-bold' : '']">{{playerData.name}}</span>
                </template>
             </div>
             <div class="text-center p-2"><span class="text-2xl">{{gameTileData.name}}</span></div>

@@ -34,10 +34,6 @@ type GameTileData = {
     tileJobName: string,
 }
 
-type GameBoard = {
-    gameTiles: Array<GameTileData>
-}
-
 type Dice = {
     diceRolling: boolean,
     rolledNumber: number,
@@ -48,7 +44,7 @@ type GameState = 'IDLE' | 'WAITFORDICEROLLING';
 
 type Store = {
     players: Array<Player>,
-    board: GameBoard,
+    gameTiles: Array<GameTileData>,
     dice: Dice,
     gameState: GameState;
     month: number, // 1=leden atd.
@@ -59,7 +55,7 @@ type Store = {
 export const _storeGame = defineStore('gameStore', () => {
 
     const state = ref<Store>({
-        board: {gameTiles: []},
+        gameTiles: [],
         currentPlayerIndex: 0,
         month: 1,
         players: [],
@@ -69,7 +65,7 @@ export const _storeGame = defineStore('gameStore', () => {
     })
 
     function restartGame() {
-        state.value.board.gameTiles = [
+        state.value.gameTiles = [
             {
                 tileId: 1,
                 name: "BANKA",
@@ -176,10 +172,6 @@ export const _storeGame = defineStore('gameStore', () => {
         })
     }
 
-    const board = computed(() => {
-        return state.value.board;
-    })
-
     const currentPlayerIndex = computed<PlayerIndex>(() => {
         return state.value.currentPlayerIndex;
     })
@@ -193,7 +185,7 @@ export const _storeGame = defineStore('gameStore', () => {
     })
 
     const gameTileList = computed<Array<GameTileData>>(() => {
-        return state.value.board.gameTiles;
+        return state.value.gameTiles;
     })
 
     function doAction(playerIndex: number, tileActionId: TileActionId) {
@@ -213,7 +205,7 @@ export const _storeGame = defineStore('gameStore', () => {
         const currentTileId = state.value.players[state.value.currentPlayerIndex].tileId;
 
         // TOTO: Spravne zjisit ID tilu na kterem je player. TieId nemusi jit postupne od 1 do X.
-        state.value.players[state.value.currentPlayerIndex].tileId = (currentTileIndex + tilesCount) % state.value.board.gameTiles.length;
+        state.value.players[state.value.currentPlayerIndex].tileId = (currentTileId + tilesCount) % state.value.gameTiles.length;
     }
 
     function setCurrentPlayerCanRollToMove(canRole: boolean) {
@@ -228,7 +220,6 @@ export const _storeGame = defineStore('gameStore', () => {
         restartGame: restartGame,
         currentPlayerIndex: currentPlayerIndex,
         addMoneyToCurrentPLayer: addMoneyToCurrentPLayer,
-        board: board,
         diceRoledNumber: diceRoledNumber,
         players: players,
         startNextPlayerTurn: startNextPlayerTurn,
